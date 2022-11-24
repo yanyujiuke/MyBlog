@@ -35,7 +35,7 @@ func LoanServer(file *ini.File) {
 
 func LoanDatabase(file *ini.File) {
 	DbHost = file.Section("databese").Key("DbHost").MustString("localhost")
-	DbPort = file.Section("databese").Key("DbPort").MustString("3306")
+	DbPort = file.Section("databese").Key("DbPort").MustString("3307")
 	DbUser = file.Section("databese").Key("DbUser").MustString("root")
 	DbPassWord = file.Section("databese").Key("DbPassWord").MustString("123456")
 	DbName = file.Section("databese").Key("DbName").MustString("ginblog")
