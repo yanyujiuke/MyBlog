@@ -15,6 +15,12 @@ var (
 	DbUser     string
 	DbPassWord string
 	DbName     string
+
+	Zone       int
+	AccessKey  string
+	SecretKey  string
+	Bucket     string
+	QiniuSever string
 )
 
 func init() {
@@ -25,6 +31,7 @@ func init() {
 
 	LoanServer(file)
 	LoanDatabase(file)
+	LoadQiniu(file)
 }
 
 func LoanServer(file *ini.File) {
@@ -39,4 +46,12 @@ func LoanDatabase(file *ini.File) {
 	DbUser = file.Section("databese").Key("DbUser").MustString("root")
 	DbPassWord = file.Section("databese").Key("DbPassWord").MustString("123456")
 	DbName = file.Section("databese").Key("DbName").MustString("ginblog")
+}
+
+func LoadQiniu(file *ini.File) {
+	Zone = file.Section("qiniu").Key("Zone").MustInt(1)
+	AccessKey = file.Section("qiniu").Key("AccessKey").String()
+	SecretKey = file.Section("qiniu").Key("SecretKey").String()
+	Bucket = file.Section("qiniu").Key("Bucket").String()
+	QiniuSever = file.Section("qiniu").Key("QiniuSever").String()
 }

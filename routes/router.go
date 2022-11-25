@@ -46,6 +46,9 @@ func InitRouter() {
 		auth.PUT("checkcomment/:id", v1.CheckComment)
 		auth.PUT("uncheckcomment/:id", v1.UncheckComment)
 
+		// 上传
+		auth.POST("upload", v1.Upload)
+
 		auth.GET("test", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
 				"a": 1,
