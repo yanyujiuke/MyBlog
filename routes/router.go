@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	v1 "myblog/admin/v1"
 	"myblog/utils"
+	"net/http"
 )
 
 func InitRouter() {
@@ -22,6 +23,24 @@ func InitRouter() {
 		auth.DELETE("user/:id", v1.DeleteUser)
 		auth.PUT("changepw/:id", v1.ChangePassword)
 
+		// 分类模块
+		auth.GET("category/list", v1.GetCate)
+		auth.POST("category/add", v1.CreateCate)
+		auth.PUT("category/:id", v1.EditCate)
+		auth.DELETE("category/:id", v1.DeleteCate)
+
+		// 文章模块
+		auth.GET("article/info/:id", v1.GetArtInfo)
+		auth.GET("article/list", v1.GetArts)
+		auth.POST("article/add", v1.CreateArt)
+		auth.PUT("article/:id", v1.EditArt)
+		auth.DELETE("article/:id", v1.DeleteArt)
+
+		auth.GET("test", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{
+				"a": 1,
+			})
+		})
 	}
 
 	_ = r.Run(utils.HttpPort)

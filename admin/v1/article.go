@@ -8,43 +8,47 @@ import (
 	"strconv"
 )
 
-// GetUsers 查询用户列表
-func GetUsers(c *gin.Context) {
+func GetArtInfo(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	data, code := model.GetArtInfo(id)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"message": errmsg.GetErrMsg(code),
+		"data":    data,
+	})
+}
+
+func GetArts(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.Query("pageSize"))
 	pageNum, _ := strconv.Atoi(c.Query("pageNum"))
-	username := c.Query("username")
+	title := c.Query("title")
 
 	switch {
-	case pageSize >= 100:
+	case pageSize > 100:
 		pageSize = 100
 	case pageSize <= 0:
-		pageSize = 0
+		pageSize = 10
 	}
 
-	if pageNum == 0 {
+	if pageNum <= 0 {
 		pageNum = 1
 	}
 
-	data, total := model.GetUsers(username, pageSize, pageNum)
-
-	code := errmsg.SUCCSE
+	data, total, code := model.GetArts(pageSize, pageNum, title)
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
+		"message": errmsg.GetErrMsg(code),
 		"data":    data,
 		"total":   total,
-		"message": errmsg.GetErrMsg(code),
 	})
 }
 
-func EditUser(c *gin.Context) {
-	var data model.User
-	id, _ := strconv.Atoi(c.Param("id"))
-	_ = c.ShouldBindJSON(&data)
+func CreateArt(c *gin.Context) {
+	var art model.Article
+	_ = c.ShouldBindJSON(&art)
 
-	code := model.CheckUpUser(id, data.Username)
-	if code == errmsg.SUCCSE {
-		model.EditUser(id, &data)
-	}
+	code := model.CreateArt(&art)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
@@ -52,22 +56,22 @@ func EditUser(c *gin.Context) {
 	})
 }
 
-func DeleteUser(c *gin.Context) {
+func EditArt(c *gin.Context) {
+	var art model.Article
 	id, _ := strconv.Atoi(c.Param("id"))
+	_ = c.ShouldBindJSON(&art)
 
-	code := model.DeleteUser(id)
+	code := model.EditArt(id, &art)
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
 		"message": errmsg.GetErrMsg(code),
 	})
 }
 
-func ChangePassword(c *gin.Context) {
-	var data model.User
+func DeleteArt(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	_ = c.ShouldBindJSON(&data)
 
-	code := model.ChangePassword(id, &data)
+	code := model.DeleteArt(id)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
