@@ -36,6 +36,10 @@ func InitRouter() {
 		auth.PUT("article/:id", v1.EditArt)
 		auth.DELETE("article/:id", v1.DeleteArt)
 
+		// 个人信息模块
+		auth.GET("profile/:id", v1.GetProfile)
+		auth.PUT("profile/:id", v1.UpdateProfile)
+
 		auth.GET("test", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
 				"a": 1,
