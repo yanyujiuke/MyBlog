@@ -52,7 +52,7 @@ func EditCate(id int, cate *Category) int {
 
 // DeleteCate 删除分类
 func DeleteCate(id int) int {
-	var cate Category
+	var cate Comment
 	err = db.Where("id = ?", id).Delete(&cate).Error
 	if err != nil {
 		return errmsg.ERROR

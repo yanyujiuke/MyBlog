@@ -40,6 +40,12 @@ func InitRouter() {
 		auth.GET("profile/:id", v1.GetProfile)
 		auth.PUT("profile/:id", v1.UpdateProfile)
 
+		// 评论模块
+		auth.GET("comment/list", v1.GetComments)
+		auth.DELETE("comment/:id", v1.DeleteComment)
+		auth.PUT("checkcomment/:id", v1.CheckComment)
+		auth.PUT("uncheckcomment/:id", v1.UncheckComment)
+
 		auth.GET("test", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
 				"a": 1,
