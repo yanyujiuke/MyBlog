@@ -59,3 +59,12 @@ func DeleteCate(id int) int {
 	}
 	return errmsg.SUCCSE
 }
+
+func FindCate(id int) (Category, int) {
+	var cate Category
+	err := db.Where("id = ?", id).First(&cate).Error
+	if err != nil {
+		return cate, errmsg.ERROR
+	}
+	return cate, errmsg.SUCCSE
+}

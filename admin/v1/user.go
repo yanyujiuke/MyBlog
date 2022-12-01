@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"myblog/model"
 	"myblog/utils/errmsg"
+	"myblog/utils/validator"
 	"net/http"
 	"strconv"
 )
@@ -72,5 +73,47 @@ func ChangePassword(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
 		"message": errmsg.GetErrMsg(code),
+	})
+}
+
+func AddUser(c *gin.Context) {
+	var data model.User
+
+	_ = c.ShouldBindJSON(&data)
+
+	msg, validCode := validator.Validate(&data)
+	if validCode != errmsg.SUCCSE {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  validCode,
+			"message": msg,
+		})
+		c.Abort()
+		return
+	}
+
+	code := model.CheckUser(data.Username)
+	if code == errmsg.SUCCSE {
+		model.CreateUser(&data)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"message": errmsg.GetErrMsg(code),
+	})
+
+}
+
+func FindUser(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	data, code := model.FindUser(id)
+	maps := make(map[string]interface{})
+	maps["username"] = data.Username
+	maps["role"] = data.Role
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"message": errmsg.GetErrMsg(code),
+		"data":    maps,
 	})
 }

@@ -75,3 +75,55 @@ func CheckComment(id int, data *Comment, isCheck bool) int {
 	}
 	return errmsg.SUCCSE
 }
+
+// AddComment 添加评论
+func AddComment(comment *Comment) int {
+	err = db.Create(&comment).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCSE
+}
+
+// FindComment 获取某条评论
+func FindComment(id int) (Comment, int) {
+	var comment Comment
+	err := db.Where("id = ?", id).First(&comment).Error
+	if err != nil {
+		return comment, errmsg.ERROR
+	}
+	return comment, errmsg.SUCCSE
+}
+
+// GetCommentByArtId 获取某文章的评论
+func GetCommentByArtId(artId int, pageSize int, pageNum int) ([]Comment, int64, int) {
+	var comments []Comment
+	var total int64
+
+	db.Where("article_id = ?", artId).Where("status = ?", 1).Count(&total)
+	err = db.Model(&Comment{}).
+		Limit(pageSize).
+		Offset((pageNum-1)*pageSize).
+		Order("Created_At DESC").
+		Select("comment.id, article.title, user_id, article_id, user.username, comment.content, comment.status,comment.created_at,comment.deleted_at").
+		Joins("LEFT JOIN article ON comment.article_id = article.id").
+		Joins("LEFT JOIN user ON comment.user_id = user.id").
+		Where("article_id = ?", artId).
+		Where("status = ?", 1).
+		Scan(&comments).
+		Error
+	if err != nil {
+		return comments, 0, errmsg.ERROR
+	}
+	return comments, total, errmsg.SUCCSE
+}
+
+func GetCommentCount(artId int) (total int64, code int) {
+	var comment Comment
+
+	err := db.Model(&comment).Where("article_id = ?", artId).Count(&total).Error
+	if err != nil {
+		return total, errmsg.ERROR
+	}
+	return total, errmsg.SUCCSE
+}

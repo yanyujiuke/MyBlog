@@ -68,3 +68,54 @@ func UncheckComment(c *gin.Context) {
 		"message": errmsg.GetErrMsg(code),
 	})
 }
+
+func AddComment(c *gin.Context) {
+	var comment model.Comment
+	_ = c.ShouldBindJSON(&comment)
+
+	code := model.AddComment(&comment)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"message": errmsg.GetErrMsg(code),
+	})
+}
+
+func FindComment(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	data, code := model.FindComment(id)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"message": errmsg.GetErrMsg(code),
+		"data":    data,
+	})
+}
+
+func GetCommentByArtId(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.Query("pageSize"))
+	pageNum, _ := strconv.Atoi(c.Query("pageNum"))
+	artId, _ := strconv.Atoi(c.Param("art_id"))
+
+	data, total, code := model.GetCommentByArtId(artId, pageSize, pageNum)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"message": errmsg.GetErrMsg(code),
+		"data":    data,
+		"total":   total,
+	})
+}
+
+func GetCommentCount(c *gin.Context) {
+	artId, _ := strconv.Atoi(c.Param("art_id"))
+
+	total, code := model.GetCommentCount(artId)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"message": errmsg.GetErrMsg(code),
+		"total":   total,
+	})
+}

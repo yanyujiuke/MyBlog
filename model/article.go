@@ -84,3 +84,22 @@ func DeleteArt(id int) int {
 	}
 	return errmsg.SUCCSE
 }
+
+// GetArtsByCid 获取某个分类下的所有文章
+func GetArtsByCid(cid int, pageSize int, pageNum int) ([]Article, int64, int) {
+	var arts []Article
+	var total int64
+
+	err := db.
+		Preload("Category").
+		Where("cid = ?", cid).
+		Limit(pageSize).
+		Offset((pageNum - 1) * pageSize).
+		Find(&arts).
+		Error
+	db.Model(&arts).Where("cid = ?", cid).Count(&total)
+	if err != nil {
+		return arts, total, errmsg.ERROR
+	}
+	return arts, total, errmsg.SUCCSE
+}
